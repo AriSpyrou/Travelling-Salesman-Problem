@@ -1,7 +1,5 @@
 import random
-import math
 import numpy as np
-from matplotlib import pyplot as plt
 import time
 import copy
 
@@ -9,24 +7,14 @@ import copy
 random.seed(time.time())
 # Set the program parameters.
 MUTATION_PROB = 0.6
-N_CITIES = 5
 N_GENERATIONS = 20
-N_TOURS = 40
-GRID_SIZE = 20
-
-
-# Creates an empty ndarray and fills it with random coordinates
-def initialize_cities():
-    new_cities = np.empty(shape=(N_CITIES, 2), dtype=int)
-    for i in range(N_CITIES):
-        new_cities[i] = [random.randint(0, GRID_SIZE), random.randint(0, GRID_SIZE)]
-    return new_cities.astype(int)
+N_TOURS = 20
 
 
 # Creates an empty ndarray and fills it with shuffled copies of the indices of the cities
 def initialize_tours():
-    new_tours = np.empty(shape=(N_TOURS, N_CITIES))
-    index_list = np.arange(N_CITIES)
+    new_tours = np.empty(shape=(N_TOURS, dist_matrix.shape[0]))
+    index_list = np.arange(dist_matrix.shape[0])
     for i in range(N_TOURS):
         random.shuffle(index_list)
         new_tours[i] = copy.copy(index_list)
@@ -38,9 +26,9 @@ def get_distance(tour):
     dist = 0
     for i in range(tour.size):
         if i+1 == tour.size:
-            dist += np.linalg.norm(cities[tour[i]] - cities[tour[0]])
+            dist += dist_matrix[tour[i], tour[0]]
         else:
-            dist += np.linalg.norm(cities[tour[i]] - cities[tour[i + 1]])
+            dist += dist_matrix[tour[i], tour[i+1]]
     return dist
 
 
@@ -56,7 +44,12 @@ def get_fittest():
     return min_dist
 
 
-cities = initialize_cities()
+# The distance matrix as seen in the image of the exercise in matrix form
+dist_matrix = np.array([[0, 4, 4, 7, 3],
+                        [4, 0, 2, 3, 5],
+                        [4, 2, 0, 2, 3],
+                        [7, 3, 2, 0, 6],
+                        [3, 5, 3, 6, 0]])
 tours = initialize_tours()
 print('Initial distance: '+str(get_fittest()))
 print('done')
