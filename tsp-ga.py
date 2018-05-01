@@ -5,8 +5,9 @@ import copy
 # Program parameters
 random.seed()
 MUTATION_PROB = 0.1
-N_GENERATIONS = 15
-N_TOURS = 10
+CROSSOVER_PROB = 0.75
+N_GENERATIONS = 10
+N_TOURS = 8
 TOURNAMENT_SIZE = 3
 
 
@@ -123,11 +124,11 @@ def mutation(tour):
 def evolve_population():
     new_tours = np.ones(shape=(N_TOURS, dist_matrix.shape[1]), dtype=int) * -1
     for i in range(N_TOURS):
-        if random.random() < 0.75:
+        if random.random() < CROSSOVER_PROB:
             parent1 = tournament_selection()
             parent2 = tournament_selection()
             while np.array_equal(parent1, parent2):
-                parent2 = roulette_wheel_selection()
+                parent2 = tournament_selection()
             new_tours[i] = mutation(crossover(parent1, parent2))
         else:
             new_tours[i] = mutation(tournament_selection())
